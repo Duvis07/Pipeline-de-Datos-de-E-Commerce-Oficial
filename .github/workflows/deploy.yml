@@ -22,8 +22,11 @@ jobs:
         run: |
           pip install -r requirements.txt 
 
-      - name: Ejecutar pipeline
-        run: python src/extract.py
+      - name: Instalar Jupyter
+        run: pip install jupyter nbconvert
+
+      - name: Ejecutar el notebook
+        run: jupyter nbconvert --execute --to notebook --inplace Project.ipyn
 
       - name: Notificación
         run: echo "Pipeline ejecutado con éxito 🚀"
