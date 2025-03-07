@@ -2,7 +2,7 @@ from src import config
 from src.extract import extract
 
 def main():
-    print("Iniciando prueba de extracción de datos...")
+    print("Iniciando prueba de extracción de datos..")
     
     # 1. Obtener las rutas y configuraciones
     csv_folder = config.DATASET_ROOT_PATH
