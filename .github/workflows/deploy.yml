@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements.txt 
 
       - name: Ejecutar pipeline
-        run: python pipeline.py  # Ajusta el nombre de tu script
+        run: python extract.py
 
       - name: Notificación
         run: echo "Pipeline ejecutado con éxito 🚀"
