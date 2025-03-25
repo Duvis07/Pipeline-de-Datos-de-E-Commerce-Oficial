@@ -268,6 +268,13 @@ ehthumbs_vista.db
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# Windows
+__pycache__/olist.db
+ dataset/
+ olist.db
+ .pytest_cache
+ olist.db
+
 # Windows Installer files
 *.cab
 *.msi
