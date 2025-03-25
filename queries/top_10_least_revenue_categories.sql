@@ -1,31 +1,14 @@
--- TODO: Esta consulta devolverá una tabla con las 10 categorías con menores ingresos
--- (en inglés), el número de pedidos y sus ingresos totales. La primera columna será
--- Category, que contendrá las 10 categorías con menores ingresos; la segunda será
--- Num_order, con el total de pedidos de cada categoría; y la última será Revenue,
--- con el ingreso total de cada categoría.
--- PISTA: Todos los pedidos deben tener un estado 'delivered' y tanto la categoría
--- como la fecha real de entrega no deben ser nulas.
-
-
-select 
-	pcnt.product_category_name_english Category,
-	count(DISTINCT oo.order_id) Num_order,
-	sum(oop.payment_value) Revenue
-from 
-	olist_orders oo 
-join olist_order_items ooi on
-	oo.order_id = ooi.order_id
-join olist_order_payments oop on
-	oo.order_id = oop.order_id
-join olist_products op on
-	ooi.product_id = op.product_id
-join product_category_name_translation pcnt on
-	op.product_category_name = pcnt.product_category_name
-where
-	oo.order_status = "delivered"
-	and oo.order_delivered_customer_date is not null
-group by
-	pcnt.product_category_name_english
-order by
-	Revenue asc
-limit 10
+SELECT 
+    pcnt.product_category_name_english AS Category,
+    COUNT(DISTINCT oo.order_id) AS Num_order,
+    SUM(oop.payment_value) AS Revenue
+FROM olist_orders oo 
+JOIN olist_order_items ooi ON oo.order_id = ooi.order_id
+JOIN olist_order_payments oop ON oo.order_id = oop.order_id
+JOIN olist_products op ON ooi.product_id = op.product_id
+JOIN product_category_name_translation pcnt ON op.product_category_name = pcnt.product_category_name
+WHERE oo.order_status = 'delivered'
+AND oo.order_delivered_customer_date IS NOT NULL
+GROUP BY pcnt.product_category_name_english
+ORDER BY Revenue ASC
+LIMIT 10;

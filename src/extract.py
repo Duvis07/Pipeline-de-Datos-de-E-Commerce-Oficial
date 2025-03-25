@@ -1,4 +1,5 @@
 from typing import Dict
+
 import requests
 from pandas import DataFrame, read_csv, read_json, to_datetime
 
@@ -8,11 +9,6 @@ def temp() -> DataFrame:
         DataFrame: A dataframe with the temperature data.
     """
     return read_csv("data/temperature.csv")
-
-# TODO: SE IMPLEMENTO LA FUNCION get_public_holidays, PERO FALLA CUANDO CORRO EL PROJECT.IPYNB
-# VERIFICAR QUE EL CODIGO FUNCIONE CORRECTAMENTE HAY LES DEJO LA GUIA DE LA FUNCION get_public_holidays
-# NO SE PORQUE FALLA HICE EL TEST EXTRACT Y FUNCIONA CORRECTAMENTE REVISEN BIEN EL CODIGO.
-
 
 def get_public_holidays(public_holidays_url: str, year: str) -> DataFrame:
     """Get the public holidays for the given year for Brazil.
@@ -24,37 +20,23 @@ def get_public_holidays(public_holidays_url: str, year: str) -> DataFrame:
     Returns:
         DataFrame: A dataframe with the public holidays.
     """
-    print(f"Obteniendo días festivos para Brasil del año {year}")
-    url = f"{public_holidays_url}/{year}/BR"
-    print(f"URL: {url}")
-    
+    response = requests.get(f"{public_holidays_url}/{year}/BR")
+
     try:
-        print("Haciendo petición HTTP...")
-        response = requests.get(url)
         response.raise_for_status()
-        print("Petición exitosa!")
-        
-        print("Procesando datos...")
-        holidays_df = DataFrame(response.json())
-        print(f"Columnas originales: {holidays_df.columns.tolist()}")
-        
-        # Eliminar columnas innecesarias si existen
-        if 'types' in holidays_df.columns:
-            holidays_df = holidays_df.drop('types', axis=1)
-        if 'counties' in holidays_df.columns:
-            holidays_df = holidays_df.drop('counties', axis=1)
-        print(f"Columnas después de limpieza: {holidays_df.columns.tolist()}")
-        
-        # Convertir la columna date a datetime
-        holidays_df['date'] = to_datetime(holidays_df['date'])
-        print("Fechas convertidas a datetime")
-        
-        print(f"Total de días festivos encontrados: {len(holidays_df)}")
-        return holidays_df
-        
     except requests.RequestException as e:
-        print(f"Error al obtener los días festivos: {str(e)}")
-        raise SystemExit(f"Error al obtener los días festivos: {str(e)}")
+        raise SystemExit(e)
+
+    holidays_df = DataFrame(response.json())
+
+    # Drop unnecessary columns
+    holidays_df.drop(columns=["types", "counties"], inplace=True)
+
+    # Convert date column to datetime
+    holidays_df["date"] = to_datetime(holidays_df["date"])
+
+    return holidays_df
+
 
 def extract(
     csv_folder: str, csv_table_mapping: Dict[str, str], public_holidays_url: str
